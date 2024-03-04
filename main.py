@@ -102,7 +102,7 @@ def predict_rub_salary_superJob(superjob_secret_key):
     return proffesions
 
 
-def bring_table(title, proffesions):
+def show_table(title, proffesions):
     table_template = [[
         'Язык программирования', 'Вакансий найдено', 'Вакансий обработано',
         'Средняя зарплата'
@@ -121,8 +121,8 @@ def main():
     superjob_secret_key = os.environ['SUPERJOB_SECRET_KEY']
     proffesions_hh = predict_rub_salary_hh()
     proffesions_sj = predict_rub_salary_superJob(superjob_secret_key)
-    table_hh = bring_table('HeadHunter Moscow', proffesions_hh)
-    table_sj = bring_table('SuperJob Moscow', proffesions_sj)
+    table_hh = show_table('HeadHunter Moscow', proffesions_hh)
+    table_sj = show_table('SuperJob Moscow', proffesions_sj)
     print(table_hh)
     print(table_sj)
 
