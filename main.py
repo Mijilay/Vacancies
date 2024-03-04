@@ -18,7 +18,7 @@ def predict_rub_salary(salary_from=None, salary_to=None):
     return expected_salary
 
 
-def get_vacancy_hh(language, page=0):
+def get_vacancies_hh(language, page=0):
     url = "https://api.hh.ru/vacancies"
     params = {"text": language, "area": 1, "page": page}
     response = requests.get(url, params=params)
@@ -31,36 +31,36 @@ def predict_rub_salary_hh():
     langs = ['JavaScript'
              'Java', 'Python', 'Ruby', 'PHP', 'C++', 'CSS', 'C#']
     for language in langs:
-        vacancy_processed = 0
-        salary_by_vacancy = []
+        vacancies_processed = 0
+        salaries_by_vacancies = []
         for page in count(0):
-            vacancy = get_vacancy_hh(language, page=page)
-            if page >= vacancy['pages'] - 1:
+            vacancies = get_vacancies_hh(language, page=page)
+            if page >= vacancies['pages'] - 1:
                 break
-            for salary_hh in vacancy['items']:
+            for salary_hh in vacancies['items']:
                 salary_money = salary_hh.get('salary')
                 if salary_money and salary_money['currency'] == 'RUR':
                     predicted_salary = predict_rub_salary( 
                         salary_hh['salary'].get('from'),
                         salary_hh['salary'].get('to'))
                     if predicted_salary:
-                        vacancy_processed += 1
-                        salary_by_vacancy.append(predicted_salary)
-        total_vacancy = vacancy["found"]
+                        vacancies_processed += 1
+                        salaries_by_vacancies.append(predicted_salary)
+        total_vacancies = vacancies["found"]
         average_salary = None
-        if salary_by_vacancy:
+        if salaries_by_vacancies:
             average_salary = int(
-                sum(salary_by_vacancy) / len(salary_by_vacancy))
+                sum(salaries_by_vacancies) / len(salaries_by_vacancies))
 
         proffesions[language] = {
-            "vacancies_found": total_vacancy,
-            "vacancies_processed": vacancy_processed,
+            "vacancies_found": total_vacancies,
+            "vacancies_processed": vacancies_processed,
             "average_salary": average_salary
         }
     return proffesions
 
 
-def get_vacancy_sj(superjob_secret_key, language, page=0):
+def get_vacancies_sj(superjob_secret_key, language, page=0):
     superjob_url = "https://api.superjob.ru/2.0/vacancies/"
 
     headers = {"X-Api-App-Id": superjob_secret_key}
@@ -75,27 +75,27 @@ def predict_rub_salary_superJob(superjob_secret_key):
     langs = ['JavaScript'
             , 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'CSS', 'C#']
     for language in langs:
-        vacancy_processed = 0
-        salary_by_vacancy = []
+        vacancies_processed = 0
+        salaries_by_vacancies = []
         for page in count(0):
-            vacancy = get_vacancy_sj(superjob_secret_key, language, page=page)
-            if not vacancy['objects']:
+            vacancies = get_vacancies_sj(superjob_secret_key, language, page=page)
+            if not vacancies['objects']:
                 break
-            for salary_sj in vacancy['objects']:
+            for salary_sj in vacancies['objects']:
                 predicted_salary = predict_rub_salary(
                     salary_sj["payment_from"], salary_sj["payment_to"])
                 if predicted_salary:
-                    vacancy_processed += 1
-                    salary_by_vacancy.append(predicted_salary)
-        total_vacancy = vacancy["total"]
+                    vacancies_processed += 1
+                    salaries_by_vacancies.append(predicted_salary)
+        total_vacancies = vacancies["total"]
         average_salary = None
-        if salary_by_vacancy:
+        if salaries_by_vacancies:
             average_salary = int(
-                sum(salary_by_vacancy) / len(salary_by_vacancy))
+                sum(salaries_by_vacancies) / len(salaries_by_vacancies))
 
         proffesions[language] = {
-            "vacancies_found": total_vacancy,
-            "vacancies_processed": vacancy_processed,
+            "vacancies_found": total_vacancies,
+            "vacancies_processed": vacancies_processed,
             "average_salary": average_salary
         }
     return proffesions
@@ -106,10 +106,10 @@ def bring_table(title, proffesions):
         'Язык программирования', 'Вакансий найдено', 'Вакансий обработано',
         'Средняя зарплата'
     ]]
-    for language, vacancy in proffesions.items():
+    for language, vacancies in proffesions.items():
         table_template.append([
-            language, vacancy['vacancies_found'], vacancy['vacancies_processed'],
-            vacancy['average_salary']
+            language, vacancies['vacancies_found'], vacancies['vacancies_processed'],
+            vacancies['average_salary']
         ])
     table = AsciiTable(table_template, title)
     return table.table
