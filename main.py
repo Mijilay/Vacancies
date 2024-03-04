@@ -20,7 +20,8 @@ def predict_rub_salary(salary_from=None, salary_to=None):
 
 def get_vacancies_hh(language, page=0):
     url = "https://api.hh.ru/vacancies"
-    params = {"text": language, "area": 1, "page": page}
+    area = 1
+    params = {"text": language, "area": area, "page": page}
     response = requests.get(url, params=params)
     response.raise_for_status()
     return response.json()
@@ -37,12 +38,12 @@ def predict_rub_salary_hh():
             vacancies = get_vacancies_hh(language, page=page)
             if page >= vacancies['pages'] - 1:
                 break
-            for salary_hh in vacancies['items']:
-                salary_money = salary_hh.get('salary')
-                if salary_money and salary_money['currency'] == 'RUR':
+            for hh_vacancy in vacancies['items']:
+                vacancys_salary = hh_vacancy.get('salary')
+                if vacancys_salary and vacancys_salary['currency'] == 'RUR':
                     predicted_salary = predict_rub_salary( 
-                        salary_hh['salary'].get('from'),
-                        salary_hh['salary'].get('to'))
+                        hh_vacancy['salary'].get('from'),
+                        hh_vacancy['salary'].get('to'))
                     if predicted_salary:
                         vacancies_processed += 1
                         salaries_by_vacancies.append(predicted_salary)
@@ -64,7 +65,7 @@ def get_vacancies_sj(superjob_secret_key, language, page=0):
     superjob_url = "https://api.superjob.ru/2.0/vacancies/"
 
     headers = {"X-Api-App-Id": superjob_secret_key}
-    params = {"town": "Москва", "keyword": language, "page": 0}
+    params = {"town": "Москва", "keyword": language, "page": page}
     response = requests.get(superjob_url, params=params, headers=headers)
     response.raise_for_status()
     return response.json()
@@ -81,9 +82,9 @@ def predict_rub_salary_superJob(superjob_secret_key):
             vacancies = get_vacancies_sj(superjob_secret_key, language, page=page)
             if not vacancies['objects']:
                 break
-            for salary_sj in vacancies['objects']:
+            for sj_vacancy in vacancies['objects']:
                 predicted_salary = predict_rub_salary(
-                    salary_sj["payment_from"], salary_sj["payment_to"])
+                    sj_vacancy["payment_from"], sj_vacancy["payment_to"])
                 if predicted_salary:
                     vacancies_processed += 1
                     salaries_by_vacancies.append(predicted_salary)
