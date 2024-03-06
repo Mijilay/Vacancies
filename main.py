@@ -43,7 +43,8 @@ def predict_rub_salary_hh():
                 if vacancies_salary and vacancies_salary['currency'] == 'RUR':
                     predicted_salary = predict_rub_salary( 
                         hh_vacancy['salary'].get('from'),
-                        hh_vacancy['salary'].get('to'))
+                        hh_vacancy['salary'].get('to')
+                    )
                     if predicted_salary:
                         salaries_by_vacancies.append(predicted_salary)
         total_vacancies = vacancies["found"]
@@ -84,7 +85,8 @@ def predict_rub_salary_superJob(superjob_secret_key):
             for sj_vacancy in vacancies['objects']:
                 predicted_salary = predict_rub_salary(
                                    sj_vacancy["payment_from"],
-                                   sj_vacancy["payment_to"])
+                                   sj_vacancy["payment_to"]
+                )
                 if predicted_salary:
                     salaries_by_vacancies.append(predicted_salary)
         total_vacancies = vacancies["total"]
