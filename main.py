@@ -39,13 +39,14 @@ def predict_rub_salary_hh():
             if page >= vacancies['pages'] - 1:
                 break
             for hh_vacancy in vacancies['items']:
-                vacancies_salary = hh_vacancy.get('salary')
+                vacancy_salary = hh_vacancy.get('salary')
                 if vacancies_salary and vacancies_salary['currency'] == 'RUR':
                     predicted_salary = predict_rub_salary( 
                         hh_vacancy['salary'].get('from'),
                         hh_vacancy['salary'].get('to')
                     )
                     if predicted_salary:
+                        vacancy_processed += 1
                         salaries_by_vacancies.append(predicted_salary)
         total_vacancies = vacancies["found"]
         average_salary = None
@@ -84,10 +85,11 @@ def predict_rub_salary_superJob(superjob_secret_key):
                 break
             for sj_vacancy in vacancies['objects']:
                 predicted_salary = predict_rub_salary(
-                                   sj_vacancy["payment_from"],
-                                   sj_vacancy["payment_to"]
+                    sj_vacancy["payment_from"],
+                    sj_vacancy["payment_to"]
                 )
                 if predicted_salary:
+                    vacancy_processed += 1
                     salaries_by_vacancies.append(predicted_salary)
         total_vacancies = vacancies["total"]
         average_salary = None
