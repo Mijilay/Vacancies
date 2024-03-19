@@ -32,7 +32,6 @@ def predict_rub_salary_hh():
     langs = ['JavaScript'
              'Java', 'Python', 'Ruby', 'PHP', 'C++', 'CSS', 'C#']
     for language in langs:
-        vacancies_processed = 0
         salaries_by_vacancies = []
         for page in count(0):
             vacancies = get_vacancies_hh(language, page=page)
@@ -46,7 +45,6 @@ def predict_rub_salary_hh():
                         hh_vacancy['salary'].get('to')
                     )
                     if predicted_salary:
-                        vacancy_processed += 1
                         salaries_by_vacancies.append(predicted_salary)
         total_vacancies = vacancies["found"]
         average_salary = None
@@ -56,7 +54,7 @@ def predict_rub_salary_hh():
 
         proffesions[language] = {
             "vacancies_found": total_vacancies,
-            "vacancies_processed": vacancies_processed,
+            "vacancies_processed": len(salaries_by_vacancies),
             "average_salary": average_salary
         }
     return proffesions
@@ -77,7 +75,6 @@ def predict_rub_salary_superJob(superjob_secret_key):
     langs = ['JavaScript'
             , 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'CSS', 'C#']
     for language in langs:
-        vacancies_processed = 0
         salaries_by_vacancies = []
         for page in count(0):
             vacancies = get_vacancies_sj(superjob_secret_key, language, page=page)
@@ -89,7 +86,6 @@ def predict_rub_salary_superJob(superjob_secret_key):
                     sj_vacancy["payment_to"]
                 )
                 if predicted_salary:
-                    vacancy_processed += 1
                     salaries_by_vacancies.append(predicted_salary)
         total_vacancies = vacancies["total"]
         average_salary = None
@@ -99,7 +95,7 @@ def predict_rub_salary_superJob(superjob_secret_key):
 
         proffesions[language] = {
             "vacancies_found": total_vacancies,
-            "vacancies_processed": vacancies_processed,
+            "vacancies_processed": len(salaries_by_vacancies),
             "average_salary": average_salary
         }
     return proffesions
